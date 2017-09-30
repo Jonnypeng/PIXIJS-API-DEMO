@@ -26,42 +26,65 @@
 		color: #FFC107;
 		z-index:1;
 	}
+
 	</style>
 </head>
 <body>
 	<div id='box'></div>
-	<div id='footer'>powered by jonny.peng@qq.com</div>
+	<div id="canvas"></div>
+	<div id='footer'>powered by http://www.jonnypeng.com</div>
 	<script src="../lib/js/pixi.js"></script>
 	<script>
 	var box  = document.getElementById('box');
 
-	var app = new PIXI.CanvasRenderer({
+	//var app = new PIXI.CanvasRenderer({
+	var app = new PIXI.WebGLRenderer({
 		width:640,
 		height:1030,
-		preserveDrawingBuffer:true
+				preserveDrawingBuffer:true
 	});
 	var stage = new PIXI.Container(0x0, true);
 
 	var rect = new PIXI.Graphics();
 	rect.beginFill(0x1e00).drawRect(0,0,100,100);
 
-	stage.addChild(rect);
+	var png100 = new PIXI.Sprite.fromImage('../images/100.png');
+
+	stage.addChild(rect,png100);
 	box.appendChild(app.view);
 
-	app.view.style.display = 'none';
+//	app.view.style.display = 'none';
+
 
 	var imgData = {};
 
-	
-	imgData.HTMLElement = app.plugins.extract.image(rect);
+	imgData.base64 = app.plugins.extract.base64(stage);	
+	imgData.HTMLElement = app.plugins.extract.image(stage);
+	imgData.canvas = app.plugins.extract.canvas(stage);
+	imgData.pixels = app.plugins.extract.pixels(stage); 
 
+
+	var imgE = document.createElement('img');
+	imgE.id='base64'; imgE.style.marginLeft = '220px';
+	imgE.src = imgData.base64;
+
+
+	document.body.appendChild(imgE);
 	document.body.appendChild(imgData.HTMLElement);
+	document.getElementById('canvas').appendChild(imgData.canvas);
+
+	console.log('RGBA,0-255,数组',imgData.pixels);
+
+	imgData.canvas.style.width = "100px";
+	imgData.canvas.style.marginLeft = "300px";
 
 	animate();
 	function animate(){
 		requestAnimationFrame(animate);
 		app.render(stage);
 	}
+
+	//结论：发现只能输出形状，而没有图片
 
 	</script>
 </body>

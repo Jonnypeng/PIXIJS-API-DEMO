@@ -1,0 +1,141 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
+	<title></title>
+	<style>
+	body{
+		margin:0px;
+	}
+	canvas{
+		position:absolute;
+		margin:0px;
+		left:0px;
+		top:0px;
+		width:100%;
+		height:100%;
+	}
+	div#footer {
+		position: absolute;
+		width: 100%;
+		height: 30px;
+		line-height: 30px;
+		text-align: center;
+		bottom: 0px;
+		color: #FFC107;
+		z-index:1;
+	}
+	</style>
+</head>
+<body>
+	<div id='footer'>powered by UVCSI</div>
+	<script src="../lib/js/pixi.js"></script>
+	<script>
+	var app = new PIXI.Application(640,1030);
+	document.body.appendChild(app.view);
+
+	var manifest = ["../images/100.png","../images/sprites/m-10001.jpg","../images/sprites/m-10002.jpg","../images/sprites/m-10003.jpg","../images/sprites/m-10004.jpg","../images/sprites/m-10005.jpg","../images/sprites/m-10006.jpg","../images/sprites/m-10007.jpg","../images/sprites/m-10008.jpg","../images/sprites/m-10009.jpg","../images/sprites/m-10010.jpg","../images/sprites/m-10011.jpg","../images/sprites/m-10012.jpg","../images/sprites/m-10013.jpg","../images/sprites/m-10014.jpg","../images/sprites/m-10015.jpg","../images/sprites/m-10016.jpg","../images/sprites/m-10017.jpg","../images/sprites/m-10018.jpg","../images/sprites/m-10019.jpg","../images/sprites/m-10020.jpg","../images/sprites/m-10021.jpg","../images/sprites/m-10022.jpg","../images/sprites/m-10023.jpg","../images/sprites/m-10024.jpg","../images/sprites/m-10025.jpg","../images/sprites/m-10026.jpg","../images/sprites/m-10027.jpg","../images/sprites/m-10028.jpg","../images/sprites/m-10029.jpg","../images/sprites/m-10030.jpg","../images/sprites/m-10031.jpg","../images/sprites/m-10032.jpg","../images/sprites/m-10033.jpg","../images/sprites/m-10034.jpg","../images/sprites/m-10035.jpg","../images/sprites/m-10036.jpg","../images/sprites/m-10037.jpg","../images/sprites/m-10038.jpg","../images/sprites/m-10039.jpg","../images/sprites/m-10040.jpg"];
+
+	var loader = new PIXI.loaders.Loader();
+	loader.add(manifest).add('../images/leftBtn.png').add('../images/rightBtn.png').add('../images/stop.png').add('../images/reset.jpg').add('../images/end.jpg');
+	loader.on('progress',function (load,resource){
+		console.log(load.progress,resource);
+	});
+	loader.load(start);
+
+	function start(){
+			console.clear();
+			var left = [];
+			for(let i = 1;i<21; i++){
+				left.push(new PIXI.Texture.fromImage(manifest[i]));
+			};
+
+			var right = [];
+			for(let i = 21;i<41;i++){
+				right.push(new PIXI.Texture.fromImage(manifest[i]));
+			};
+
+			function bitmap(obj,url,anchor,x,y){
+				obj = new PIXI.Sprite.fromImage(url);
+				obj.anchor.set(anchor);
+				obj.x = x;
+				obj.y = y;
+				return obj;
+			};
+
+			var movie = new PIXI.extras.AnimatedSprite(left);
+			movie.anchor.set(0.5);
+			movie.x = app.screen.width / 2;
+			movie.y = 500;
+			movie.loop = true;
+			movie.speed = 20/60;
+
+
+			var leftBtn = bitmap(leftBtn,'../images/leftBtn.png',0.5,640*0.333,900);leftBtn.interactive = true;
+			var rightBtn = bitmap(rightBtn,'../images/rightBtn.png',0.5,640*0.333*2,900);rightBtn.interactive = true;
+			var stopBtn = bitmap(stopBtn,'../images/stop.png',0.5,320,800);stopBtn.interactive = true;
+			var resetBtn = bitmap(reset,'../images/reset.jpg',0.5,640*0.25,800);resetBtn.interactive = true;
+			var endBtn = bitmap(endBtn,'../images/end.jpg',0.5,640*0.5 + 640*0.25,800);endBtn.interactive = true;
+
+			app.stage.addChild(leftBtn,rightBtn,stopBtn,resetBtn,endBtn,movie);
+
+			console.log('帧数合计:' + movie.totalFrames);
+
+
+			leftBtn.on('pointertap',toLeft);
+			rightBtn.on('pointertap',toRight);
+			stopBtn.on('pointertap',toStop);
+
+			resetBtn.on('pointertap',reset);
+			endBtn.on('pointertap',end);
+
+			function reset(){
+				movie.gotoAndPlay(0);
+			};
+
+			function end(){
+				movie.gotoAndStop(20);
+			};
+
+
+
+			movie.onFrameChange = function (){
+				console.log('playing:' + movie.playing);
+			};
+
+			var index = 0;
+			movie.onLoop = function (){
+				index++;
+				console.log('loop count is :' + index);
+			}
+
+
+			function toLeft(){
+				movie.stop();
+				movie.textures = left;
+				movie.play();
+			};
+
+			function toRight(){
+				movie.stop();
+				movie.textures = right;
+				movie.play();
+			};
+
+			function toStop(){
+				movie.stop();
+				console.log('playing:' + movie.playing);
+			console.log('当前帧为:',movie.currentFrame);
+			};
+
+			app.ticker.add(update);
+
+			function update(){
+			};
+
+			/*init*/
+	};
+	</script>
+</body>
+</html>
