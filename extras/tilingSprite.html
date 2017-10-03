@@ -70,6 +70,10 @@
     bg.tilePosition.x = 0;
     bg.tilePosition.y = 0;
 
+		var blur = new PIXI.filters.BlurFilter(2);
+
+		em.filters = [blur];
+
     app.ticker.add(update);
 
     var count = 0;
