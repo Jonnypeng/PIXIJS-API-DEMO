@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
+	<title></title>
+	<style>
+	body{
+		margin:0px;
+	}
+	canvas{
+		position:absolute;
+		margin:0px;
+		left:0px;
+		top:0px;
+		width:100%;
+		height:100%;
+	}
+	div#footer {
+		position: absolute;
+		width: 100%;
+		height: 30px;
+		line-height: 30px;
+		text-align: center;
+		bottom: 0px;
+		color: #FFC107;
+		z-index:1;
+	}
+	</style>
+</head>
+<body>
+	<div id='footer'>powered by UVCSI</div>
+	<script src="../lib/js/pixi.js"></script>
+	<script>
+	var app = new PIXI.Application(640,1030);
+	document.body.appendChild(app.view);
+
+  var loader = new PIXI.loaders.Loader();
+  loader.add('tiling','../images/tiling.png')
+  .add('px100','../images/100.png');
+  loader.load(start);
+
+  function start(){
+    var texture = new PIXI.Texture.fromImage('tiling');
+    var bg = new PIXI.extras.TilingSprite(texture,640,1030);
+    var em = new PIXI.extras.TilingSprite(texture,400,800);
+    var px = new PIXI.extras.TilingSprite.fromImage('px100',300,300);
+
+    app.stage.addChild(bg,em,px);
+
+    bg.anchor.set(0.5);
+    em.anchor.set(0.5);
+    px.anchor.set(0.5);
+
+    bg.x = em.x = px.x = app.screen.width / 2;
+    bg.y = em.y = px.y = app.screen.height / 2;
+
+    em.tileTransform.pivot.x = 640/2;
+    em.tileTransform.pivot.y = 1030/2;
+
+    px.tileTransform.pivot.x = 150;
+    px.tileTransform.pivot.y = 150;
+
+    px.tileTransform.position.x = 150;
+    px.tileTransform.position.y = 150;
+
+    em.tileScale.x = 1.5;
+    em.tileScale.y = 1.5;
+
+    bg.tilePosition.x = 0;
+    bg.tilePosition.y = 0;
+
+    app.ticker.add(update);
+
+    var count = 0;
+    function update(){
+        count+=0.01;
+        bg.tilePosition.y += 10;
+        em.tilePosition.y += 10;
+        px.tileTransform.skew.x = Math.sin(count);
+        px.tileTransform.skew.y = Math.cos(count);
+    };
+
+  };
+	</script>
+</body>
+</html>
