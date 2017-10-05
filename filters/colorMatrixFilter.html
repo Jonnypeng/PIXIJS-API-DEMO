@@ -38,61 +38,98 @@
 	var app = new PIXI.Application(1030,640);
 	document.body.appendChild(app.view);
 
-  var load = new PIXI.loaders.Loader();
-  load.add(['../images/wImg.png','../images/blackAndWhiteBtn.png','../images/brightnessAdd.png','../images/contrast.png']);
-  load.load(start);
+	var load = new PIXI.loaders.Loader();
+	load.add(['../images/wImg.png','../images/reset.jpg','../images/blackAndWhiteBtn.png','../images/brightnessAdd.png','../images/contrast.png','../images/hue.png','../images/saturate.png']);
+	load.load(start);
 
-  function start(){
-    var sprite = new PIXI.Sprite.fromImage('../images/wImg.png');
-    sprite.anchor.set(0.5);
-    sprite.x = app.screen.width / 2;
-    sprite.y = app.screen.height / 2;
+	function start(){
+		var sprite = new PIXI.Sprite.fromImage('../images/wImg.png');
+		sprite.anchor.set(0.5);
+		sprite.x = app.screen.width / 2;
+		sprite.y = app.screen.height / 2;
 
-    var blackAndWhiteBtn = new button('../images/blackAndWhiteBtn.png',(1030*0.3333),530);
-    var brightnessAddBtn = new button('../images/brightnessAdd.png',(1030*0.5),530);
+		var blackAndWhiteBtn = new button('../images/blackAndWhiteBtn.png',(1030*0.3333),530);
+		var brightnessAddBtn = new button('../images/brightnessAdd.png',(1030*0.5),530);
+		var contrastBtn = new button('../images/contrast.png',(1030*0.3333*2),530);
+		var hueBtn = new button('../images/hue.png',(1030*0.3333),590);
+		var saturateBtn = new button('../images/saturate.png',(1030*0.5),590);
+		var resetBtn = new button('../images/reset.jpg',1030*0.33333*2,590);
 
-    app.stage.addChild(sprite,blackAndWhiteBtn,brightnessAddBtn);
+		app.stage.addChild(sprite,resetBtn,blackAndWhiteBtn,brightnessAddBtn,contrastBtn,hueBtn,saturateBtn);
 
-    var colorMatrixFilter = new PIXI.filters.ColorMatrixFilter();
+		var colorMatrixFilter = new PIXI.filters.ColorMatrixFilter();
 
-    var colorMatrix = {
-      'initMatrix':[
-        1,0,0,0,0,
-        0,1,0,0,0,
-        0,0,1,0,0,
-        0,0,0,1,0
-      ],
-      'brightness':0,
-      'blackAndWhite':false
-    };
+		var colorMatrix = {
+			'initMatrix':[
+				1,0,0,0,0,
+				0,1,0,0,0,
+				0,0,1,0,0,
+				0,0,0,1,0
+			],
+			'brightness':0,
+			'blackAndWhite':false
+		};
 
-    sprite.filters = [colorMatrixFilter];
+		sprite.filters = [colorMatrixFilter];
 
-    blackAndWhiteBtn.on('pointertap',function (){
-    colorMatrixFilter.blackAndWhite(true);
-    reset();
-    });
+		blackAndWhiteBtn.on('pointertap',function (){
+			colorMatrixFilter.blackAndWhite(true);
+		});
 
-    brightnessAddBtn.on('pointertap',function (){
-      brAni();
-    });
+		resetBtn.on('pointertap',reset);
+		brightnessAddBtn.on('pointertap',brAni);
+		contrastBtn.on('pointertap',contrastAni);
+		hueBtn.on('pointertap',hueAni);
+		saturateBtn.on('pointertap',saturateAni);
 
-    function reset(){
-      setTimeout(function (){
-      colorMatrixFilter.matrix = colorMatrix.initMatrix;
-      },2000);
-    };
+		var bright = 0;
+		function brAni(){
+			bright+=0.1;
+			colorMatrixFilter.brightness(bright);
+		};
 
-    var bright = 0;
-    function brAni(){
-          bright+=0.1;
-          bright = bright % 1;
-          colorMatrixFilter.brightness(bright);
-    };
+		var contrast = 0;
+		function contrastAni(){
+			contrast+=0.1;
+			colorMatrixFilter.contrast(contrast);
+		};
+
+		var hue = {
+			value:0
+		};
+		var huePower = true;
+		function hueAni(){
+			if(huePower==true){
+				huePower = false;
+				new TweenMax(hue,13,{
+					value:360,
+					onUpdate:function (){
+						colorMatrixFilter.hue(hue.value,false);
+					},
+					onComplete:function (){
+						hue.value = 0;
+						huePower = true;
+					}
+				})
+			};
+		};
+
+		var saturate = 0;
+		function saturateAni(){
+			saturate+=0.1;
+			saturate = saturate % 5;
+			colorMatrixFilter.saturate(saturate);
+		};
+
+
+		function reset(){
+			bright = hue = contrast = 0;
+			colorMatrixFilter.reset();
+		};
 
 
 
-  };
+	};
 	</script>
 </body>
 </html>
