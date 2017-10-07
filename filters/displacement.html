@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
+	<title></title>
+	<style>
+	body{
+		margin:0px;
+	}
+	canvas{
+		position:absolute;
+		margin:0px;
+		left:0px;
+		top:0px;
+		width:100%;
+		height:100%;
+	}
+	div#footer {
+		position: absolute;
+		width: 100%;
+		height: 30px;
+		line-height: 30px;
+		text-align: center;
+		bottom: 0px;
+		color: #FFC107;
+		z-index:1;
+	}
+	</style>
+</head>
+<body>
+	<div id='footer'>powered by UVCSI</div>
+	<script src="../lib/js/pixi.js"></script>
+	<script src="../lib/js/pixi-spine.js"></script>
+	<script src="../lib/js/TweenMax.min.js"></script>
+	<script>
+	var app = new PIXI.Application(640,1008);
+	document.body.appendChild(app.view);
+
+	var loader = new PIXI.loaders.Loader();
+	loader.add('bg','../images/wallpaper.jpg').add('snow','../images/transition.png');
+	loader.load(start);
+
+	function start(){
+		var bg_0 = new PIXI.Sprite.fromImage('bg');
+		var bg = new PIXI.Sprite.fromImage('bg');
+
+		var sprite = new PIXI.Sprite.fromImage('bg');
+
+		var snow = new PIXI.Sprite.fromImage('snow');
+
+		app.stage.addChild(bg_0,bg,snow);
+
+		var displacement = new PIXI.filters.DisplacementFilter(sprite);
+		displacement.scale.y = 1;
+
+		bg.filters = [displacement];
+		bg.filterArea = new PIXI.Rectangle(0,726,640,292);
+
+		snow.anchor.set(0.5);
+		snow.scale.set(0.1);
+		snow.orX = 400;
+		snow.orY = 300;
+		snow.blendMode = PIXI.BLEND_MODES.MULTIPLY;
+		//sonw.blendMode = PIXI.BLEND_MODES.HARD_LIGHT
+
+		snow.direction = new PIXI.Point();
+
+		app.ticker.add(update);
+		
+		var radius = 200;
+		var count = 0;
+		function update(){
+				count+=0.1;
+				snow.direction.y = Math.sin(count*(Math.PI/180)) * radius;
+				snow.direction.x = Math.cos(count*(Math.PI/180)) * radius;
+				snow.x =snow.direction.x + snow.orX;
+				snow.y = snow.direction.y +	snow.orY;
+				displacement.scale.x = Math.sin(count)*10 ;
+				displacement.scale.y = Math.cos(count)*10 ;
+		};
+
+	};
+
+	</script>
+</body>
+</html>
