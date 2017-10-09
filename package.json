@@ -1,0 +1,21 @@
+{
+  "name": "pixi_api_demo",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "dependencies": {},
+  "devDependencies": {},
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Jonnypeng/PIXIJS-API-DEMO.git"
+  },
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/Jonnypeng/PIXIJS-API-DEMO/issues"
+  },
+  "homepage": "https://github.com/Jonnypeng/PIXIJS-API-DEMO#readme"
+}

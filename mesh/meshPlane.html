@@ -1,0 +1,95 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
+	<title></title>
+	<style>
+	body{
+		margin:0px;
+	}
+	canvas{
+		position:absolute;
+		margin:0px;
+		left:0px;
+		top:0px;
+		width:100%;
+		height:100%;
+	}
+	div#footer {
+		position: absolute;
+		width: 100%;
+		height: 30px;
+		line-height: 30px;
+		text-align: center;
+		bottom: 0px;
+		color: #FFC107;
+		z-index:1;
+	}
+	</style>
+</head>
+<body>
+	<div id='footer'>powered by UVCSI</div>
+	<script src="../lib/js/pixi.js"></script>
+	<script src="../lib/js/pixi-spine.js"></script>
+	<script src="../lib/js/TweenMax.min.js"></script>
+	<script>
+	var app = new PIXI.Application(640,1030);
+	document.body.appendChild(app.view);
+
+	var loader = new PIXI.loaders.Loader();
+	loader.add('../images/600cube.jpeg');
+	loader.load(start);
+
+	function start(){
+		var img = PIXI.Texture.fromImage('../images/600cube.jpeg');
+
+
+		var meshPlane = new PIXI.mesh.Plane(img,10,10);
+
+		app.stage.addChild(meshPlane);
+
+		meshPlane.x = app.screen.width / 2 - meshPlane.width / 2;
+		meshPlane.y = app.screen.height / 2 - meshPlane.height / 2;
+
+
+
+		var vertices = meshPlane.vertices;
+		console.log(vertices);
+
+		ani();
+
+		function ani(){
+			var points = [];
+			var initPoints = [];
+
+			var i = 0;
+
+			while(i<100){
+				points[i] = new PIXI.Point(vertices[2*i],vertices[2*i+1]);
+				initPoints[i] = new PIXI.Point(Math.random()*600,Math.random()*600);
+				i++;
+			}
+
+
+			for(let j = 0;j<100;j++){
+				new TweenMax(
+					initPoints[j],
+					5,
+					{
+						x:points[j].x,
+						y:points[j].y,
+						yoyo:true,
+						repeat:-1,
+						onUpdate:function (){
+							meshPlane.vertices[j*2] = initPoints[j].x;
+							meshPlane.vertices[j*2 + 1] = initPoints[j].y;
+						}
+					}
+				)
+			};
+		};
+	};
+	</script>
+</body>
+</html>
