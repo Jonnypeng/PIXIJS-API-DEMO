@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
+	<title></title>
+	<style>
+	body{
+		margin:0px;
+	}
+	canvas{
+		position:absolute;
+		margin:0px;
+		left:0px;
+		top:0px;
+		width:100%;
+		height:100%;
+	}
+	div#footer {
+		position: absolute;
+		width: 100%;
+		height: 30px;
+		line-height: 30px;
+		text-align: center;
+		bottom: 0px;
+		color: #FFC107;
+		z-index:1;
+	}
+	</style>
+</head>
+<body>
+	<div id='footer'>powered by UVCSI</div>
+	<script src="../lib/js/pixi.js"></script>
+	<script src="../lib/js/pixi-spine.js"></script>
+	<script src="../lib/js/TweenMax.min.js"></script>
+	<script>
+	var app = new PIXI.Application(640,1030);
+	document.body.appendChild(app.view);
+
+	var loader = new PIXI.loaders.Loader();
+	loader.add('../images/100.png');
+	loader.load(start);
+
+	function start(){
+		var img = PIXI.Texture.fromImage('../images/100.png');
+
+		var mesh = new PIXI.mesh.NineSlicePlane(img,20,20,20,20);
+
+		app.stage.addChild(mesh);
+
+    mesh.updateHorizontalVertices();
+
+    console.log(mesh);
+
+		mesh.x = app.screen.width / 2 - mesh.width / 2;
+		mesh.y = app.screen.height / 2 - mesh.height / 2;
+	};
+	</script>
+</body>
+</html>

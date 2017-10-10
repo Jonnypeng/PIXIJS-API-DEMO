@@ -1,0 +1,99 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
+	<title>精灵图与Tween</title>
+	<style>
+	body{
+		margin:0px;
+	}
+	canvas{
+		position:absolute;
+		margin:0px;
+		left:0px;
+		top:0px;
+		width:100%;
+		height:100%;
+	}
+	div#footer {
+		position: absolute;
+		width: 100%;
+		height: 30px;
+		line-height: 30px;
+		text-align: center;
+		bottom: 0px;
+		color: #FFC107;
+		z-index:1;
+	}
+	</style>
+</head>
+<body>
+	<div id='footer'>powered by UVCSI</div>
+	<script src="../lib/js/pixi.js"></script>
+	<script src='../lib/js/TweenMax.min.js'></script>
+	<script>
+	var app = new PIXI.Application(640,1030);
+	document.body.appendChild(app.view);
+
+	var loader = new PIXI.loaders.Loader();
+
+	loader.add('../images/fighter.json');
+	loader.on('progress',function (load,resource){
+		console.log(load.progress,resource);
+	});
+	loader.load(start);
+
+	function start(){
+			var all = [];
+			for(let i = 0;i<30;i++){
+				i = i < 10 ? i = '0' + i : i;
+				all.push(PIXI.Texture.fromFrame('rollSequence00' + i + '.png'));
+			};
+
+			var movie = new PIXI.extras.AnimatedSprite(all);
+			movie.animationSpeed = 0.3;
+			movie.play();
+			movie.anchor.set(0.5);
+			movie.x = app.screen.width / 2;
+			movie.y = 900;
+			movie.scale.set(0.7);
+			app.stage.addChild(movie);
+
+			var points = [];
+
+			var points = [
+				{x:0,y:-70},
+				{x:640,y:0},
+				{x:640,y:1030},
+				{x:320,y:1030},
+				{x:320,y:0},
+				{x:0,y:0},
+				{x:0,y:1030},
+				{x:320,y:0},
+				{x:640,y:-70}
+			];
+
+			/*for(let j = 0;j<15;j++){
+				let dx = Math.random()*640;
+				let dy = Math.random()*1030;
+				points.push({x:dx,y:dy});
+			};*/
+
+			console.log(points);
+			new TweenMax(movie,10,{
+				'bezier':{
+					'values':points,
+					'type':'quadratic',
+					'autoRotate':["x","y","rotation",90*Math.PI/180,true]
+				},
+				'rotation':(Math.PI/180)*360,
+				'repeat':-1
+			});
+
+
+	};
+
+	</script>
+</body>
+</html>

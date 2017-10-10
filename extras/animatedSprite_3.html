@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
+	<title></title>
+	<style>
+	body{
+		margin:0px;
+	}
+	canvas{
+		position:absolute;
+		margin:0px;
+		left:0px;
+		top:0px;
+		width:100%;
+		height:100%;
+	}
+	div#footer {
+		position: absolute;
+		width: 100%;
+		height: 30px;
+		line-height: 30px;
+		text-align: center;
+		bottom: 0px;
+		color: #FFC107;
+		z-index:1;
+	}
+	</style>
+</head>
+<body>
+	<div id='footer'>powered by UVCSI</div>
+	<script src="../lib/js/pixi.js"></script>
+	<script>
+	var app = new PIXI.Application(640,1030);
+	document.body.appendChild(app.view);
+
+	var loader = new PIXI.loaders.Loader();
+
+	loader.add('../images/fighter.json');
+	loader.on('progress',function (load,resource){
+		console.log(load.progress,resource);
+	});
+	loader.load(start);
+
+	function start(){
+			var all = [];
+			for(let i = 0;i<30;i++){
+				i = i < 10 ? i = '0' + i : i;
+				all.push(PIXI.Texture.fromFrame('rollSequence00' + i + '.png'));
+			};
+
+			var movie = new PIXI.extras.AnimatedSprite(all);
+			movie.animationSpeed = 0.4;
+			movie.play();
+			movie.anchor.set(0.5);
+			movie.x = app.screen.width / 2;
+			movie.y = 900;
+			app.stage.addChild(movie);
+	};
+
+	</script>
+</body>
+</html>
