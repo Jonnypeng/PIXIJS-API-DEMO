@@ -38,37 +38,37 @@
 	document.body.appendChild(app.view);
 
   var loader = new PIXI.loaders.Loader();
-  loader.add(['../images/bg09.jpg','../images/water.jpeg']);
+  loader.add('../images/100.png');
   loader.load(start);
 
   function start(){
-		var front = new PIXI.Sprite.fromImage('../images/bg09.jpg');
-    var img = PIXI.Texture.fromImage('../images/water.jpeg');
+    var img = new PIXI.Sprite.fromImage('../images/100.png');
+    app.stage.addChild(img);
 
-    var points = [];
-    var length = 640 / 50 ;
+    img.interactive = true;
+    img.on('touchstart',touchstart);
+    img.on('touchmove',touchmove);
 
-    for(var i = 0;i<51;i++){
-      points.push(new PIXI.Point(i*length,0));
+    var originY;
+    var endY;
+    var dy;
+
+    function touchstart(event){
+      originY = event.data.global.y;
     };
 
-    var meshRope = new PIXI.mesh.Rope(img,points);
-		meshRope.y = 1030 / 2;meshRope.x = - 20;
-		meshRope.scale.set(1.2);
-
-    app.stage.addChild(meshRope,front);
-
-		front.alpha = 0.85;
-
-		var count = 0;
-		app.ticker.add(function() {
-    count += 0.1;
-    for (var i = 0; i < points.length; i++) {
-        points[i].y = Math.sin((i * 0.5) + count) * 1;
-        points[i].x = i * length + Math.cos((i * 0.3) + count) * 1;
-    }
-});
-
+    function touchmove(event){
+      //img.position = event.data.global;
+      endY = event.data.global.y;
+      if(originY > endY){
+        dy = originY - endY;
+        img.y-=dy;
+      }else if(originY < endY){
+        dy = endY - originY;
+        img.y+=dy2;
+      }
+      console.log(dy);
+    };
 
   };
 	</script>

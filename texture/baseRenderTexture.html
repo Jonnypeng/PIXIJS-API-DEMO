@@ -3,7 +3,7 @@
 <head>
 	<meta charset="UTF-8">
 	<meta name="viewport" content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
-	<title>精灵图与Tween</title>
+	<title>纹理镜像</title>
 	<style>
 	body{
 		margin:0px;
@@ -62,23 +62,14 @@
 
 			var points = [];
 
+			var radius = 250;
 			var points = [
-				{x:0,y:-70},
-				{x:640,y:0},
-				{x:640,y:1030},
-				{x:320,y:1030},
-				{x:320,y:0},
-				{x:0,y:0},
-				{x:0,y:1030},
-				{x:320,y:0},
-				{x:0,y:-70}
+				{x:320,y:320},
+				{x:(320-radius*2),y:(320+radius)},
+				{x:320,y:(320+radius*2)},
+				{x:(320+radius*2),y:(320+radius)},
+				{x:320,y:320}
 			];
-
-			/*for(let j = 0;j<15;j++){
-				let dx = Math.random()*640;
-				let dy = Math.random()*1030;
-				points.push({x:dx,y:dy});
-			};*/
 
 			console.log(points);
 			new TweenMax(movie,10,{
@@ -90,6 +81,24 @@
 				'rotation':(Math.PI/180)*360,
 				'repeat':-1
 			});
+
+			var brt = new PIXI.BaseRenderTexture(640,1030,PIXI.SCALE_MODES.LINEAR,1);
+			var rt = new PIXI.RenderTexture(brt);
+
+			var copyVision = new PIXI.Sprite(rt);
+			copyVision.anchor.set(0.5);
+			copyVision.x = 320;
+			copyVision.y = 1030 * 0.5;
+
+			copyVision.rotation = (Math.PI/180)*180;
+
+			app.stage.addChild(copyVision);
+
+			app.ticker.add(update);
+
+			function update(){
+				app.renderer.render(movie,rt);
+			};
 
 
 	};

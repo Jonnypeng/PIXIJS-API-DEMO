@@ -31,32 +31,172 @@
 <body>
 	<div id='footer'>powered by UVCSI</div>
 	<script src="../lib/js/pixi.js"></script>
+	<script src='../lib/js/pixi-jonny.js'></script>
+	<script src='../lib/js/TweenMax.min.js'></script>
 	<script>
 	var app = new PIXI.Application(640,1030);
 	document.body.appendChild(app.view);
 
 	var loader = new PIXI.loaders.Loader();
 
-	loader.add('../images/fighter.json');
+	loader.add(['../images/ActionAssets.json','../images/floor.json']);
 	loader.on('progress',function (load,resource){
 		console.log(load.progress,resource);
 	});
 	loader.load(start);
 
 	function start(){
-			var all = [];
-			for(let i = 0;i<30;i++){
-				i = i < 10 ? i = '0' + i : i;
-				all.push(PIXI.Texture.fromFrame('rollSequence00' + i + '.png'));
-			};
 
-			var movie = new PIXI.extras.AnimatedSprite(all);
-			movie.animationSpeed = 0.4;
-			movie.play();
-			movie.anchor.set(0.5);
-			movie.x = app.screen.width / 2;
-			movie.y = 900;
-			app.stage.addChild(movie);
+		var bg_fps,floor_fps,Explosion_Sequence_fps,PewPew_fps,alienAnim_fps,fighter_bankLeft_fps,fighter_bankRight_fps,shipDebris_fps;
+		var bg,plane,pew;
+
+		var game = {
+			'set':function (){
+
+				bg_fps = [];
+
+				bg_fps[0] = PIXI.Texture.fromFrame('shmupBG_top.jpg');
+				bg_fps[1] = PIXI.Texture.fromFrame('shmupBG_mid.jpg');
+				bg_fps[2] = PIXI.Texture.fromFrame('shmupBG_bot.jpg');
+
+				fighter_bankLeft_fps = [];		//飞机向左
+				for(let i = 1;i<6;i++){
+					i = i < 10 ? i = '0' + i : i;
+					fighter_bankLeft_fps.push(PIXI.Texture.fromFrame('fighter_bankLeft_' + i + '.png'));
+				}
+
+				fighter_bankRight_fps = [];			//飞机向右
+				for(let i = 1;i<6;i++){
+					i = i < 10 ? i = '0' + i : i;
+					fighter_bankRight_fps.push(PIXI.Texture.fromFrame('fighter_bankRight_' + i + '.png'));
+				}
+
+				Explosion_Sequence_fps = [];   //爆炸
+				for(let i = 1;i<28;i++){
+					Explosion_Sequence_fps.push(PIXI.Texture.fromFrame('Explosion_Sequence_A ' + i + '.png'));
+				};
+
+				PewPew_fps = [];  		//飞机底部火焰
+				for(let i = 1;i<17;i++){
+					PewPew_fps.push(PIXI.Texture.fromFrame('PewPew' + i + '.png'));
+				}
+
+				alienAnim_fps = [];
+				for(let i = 0;i<21;i++){
+					i = i < 10 ? i = '0' + i : i;
+					alienAnim_fps.push(PIXI.Texture.fromFrame('alienAnim_' + i + '.png'));
+				}
+
+				shipDebris_fps = [];
+				for(let i = 1;i<7;i++){
+					shipDebris_fps.push(PIXI.Texture.fromFrame('shipDebris_' + i + '.png'));
+				};
+				game.get();
+			},
+			'get':function (){
+
+				bg = new PIXI.Container();
+
+				bg.top = new PIXI.Sprite(bg_fps[0]);bg.top.y = 798*-1
+				bg.mid = new PIXI.Sprite(bg_fps[1]);bg.mid.y = 0;
+				bg.bot = new PIXI.Sprite(bg_fps[2]);bg.bot.y = 798*1;
+				bg.limitY = 798*2;
+
+				app.ticker.add(bgUpdate);
+
+				var count = 2;
+				function bgUpdate(){
+					bg.top.y += count;
+					bg.mid.y += count;
+					bg.bot.y += count;
+
+					if(bg.bot.y>=bg.limitY){
+						bg.bot.y = 798*-1;
+					}else if(bg.mid.y>=bg.limitY){
+						bg.mid.y = 798*-1;
+					}else if(bg.top.y>=bg.limitY){
+						bg.top.y = 798*-1;
+					};
+				};
+
+				bg.addChild(bg.top,bg.mid,bg.bot);
+				bg.scale.x = 640 / bg.width;
+
+				plane = new PIXI.Container();
+
+				planeBody = new PIXI.extras.AnimatedSprite(fighter_bankRight_fps);
+				planeBody.animationSpeed = 0.4;
+				planeBody.loop = false;
+				planeBody.stop();
+
+				pew = new PIXI.extras.AnimatedSprite(PewPew_fps);
+				pew.x = plane.x + 15;
+				pew.y = plane.y + 100;
+				pew.play();
+
+				plane.addChild(planeBody,pew);
+
+				plane.x = app.screen.width / 2 - plane.width / 2;
+				plane.y = app.screen.height - plane.height - 50;
+
+				app.stage.addChild(bg,plane);
+
+				game.control();
+			},
+			'control':function (){
+				plane.interactive = true;
+
+				plane.on('pointerdown',dragStart)
+				.on('pointermove',dragMove)
+				.on('pointerup',dragEnd)
+
+
+				plane = new PIXI.Container();
+
+				planeBody = new PIXI.extras.AnimatedSprite(fighter_bankRight_fps);
+				planeBody.animationSpeed = 0.4;
+				planeBody.loop = false;
+				planeBody.stop();
+
+				pew = new PIXI.extras.AnimatedSprite(PewPew_fps);
+				pew.x = plane.x + 15;
+				pew.y = plane.y + 100;
+				pew.play();
+
+				plane.addChild(bg,planeBody,pew);
+
+				plane.x = app.screen.width / 2 - plane.width / 2;
+				plane.y = app.screen.height - plane.height - 50;
+
+				app.stage.addChild(bg,plane);
+
+				game.control();
+			},
+			'control':function (){
+				plane.interactive = true;
+
+				plane.on('pointerdown',dragStart)
+				.on('pointermove',dragMove)
+				.on('pointerup',dragEnd)
+
+				function dragStart(event){
+					this.dragging = true;
+				};
+
+				function dragMove(event){
+					if(this.dragging){
+						this.position.x = event.data.global.x - this.width/2;
+						this.position.y = event.data.global.y - this.height/2;
+					};
+				};
+
+				function dragEnd(){
+					this.dragging = false;
+				};
+
+			}
+		};
+		game.set();
 	};
 
 	</script>
